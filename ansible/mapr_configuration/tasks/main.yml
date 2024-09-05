@@ -1,0 +1,33 @@
+# Fichier principal pour le rôle hadoop_common
+
+# 1. Installer les utilitaires sur tous les nœuds
+- include_tasks: install_utilities.yml
+  # Installer les utilitaires nécessaires pour le fonctionnement des nœuds.
+
+# 2. Mettre à jour les fichiers hosts
+- import_tasks: update_hosts.yml
+  # Mettre à jour les fichiers /etc/hosts sur les nœuds.
+
+# 3. Ajouter les informations d'identification du dépôt
+- import_tasks: add_repository_credential.yml
+  # Ajouter les informations d'identification nécessaires pour accéder aux dépôts.
+
+# 4. Créer les groupes et utilisateurs nécessaires
+- import_tasks: create_user_group.yml
+  # Créer les groupes et utilisateurs requis pour les services MapR.
+
+# 5. Ouvrir les ports nécessaires sur les nœuds
+- import_tasks: open_port.yml
+  # Configurer les règles de pare-feu pour permettre le trafic sur les ports requis.
+
+# 6. Installer les services MapR sur les nœuds appropriés
+- include_tasks: install_mapr_services.yml
+  # Installer les différents services MapR sur les nœuds correspondants.
+
+# 7. Obtenir la licence MapR (si le nœud est un nœud de licence)
+- import_tasks: get_license.yml
+  when: inventory_hostname in groups['Licence_node']
+  # Exécuter la tâche pour obtenir une licence MapR uniquement sur les nœuds désignés comme Licence_node.
+
+
+ 

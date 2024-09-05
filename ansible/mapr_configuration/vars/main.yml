@@ -1,0 +1,167 @@
+# Version de MapR et de l'écosystème
+mapr_version: "v6.1.1"
+mapr_ecosystem_version: "MEP-6.1.1"
+
+# Nom du cluster et informations de contact
+cluster_name: mapr.cluster.local
+email: "khemilioussama68@gmail.com"
+
+# Mot de passe pour le dépôt et pour MapR (doit être crypté)
+repo_password: "A8PRWvBGvik2XRKoHt0LlHbJ7hvEptun9eRpRV_8z2Z2QikAqEERX9Dybkbj5Lyz1SYcus_1WeRIz1osZOE0MA"
+mapr_password: "$1$SomeSalt$OpdfRPgT6HV2yRYEiAW3d1" # mot de passe crypté pour MapR
+
+# Identifiant de groupe
+gid: 3333
+
+# Définition des ports pour chaque service
+service_ports:
+  all:
+    ports:
+      - "25/tcp"     # Email (SMTP)
+      - "323/tcp"    # NTP
+      - "111/tcp"    # Port Mapper
+      - "68/tcp"     # DHCP Client
+      - "1111/tcp"   # Port personnalisé
+      - "798/tcp"    # Port personnalisé
+    jps_name: "WardenMain"
+
+  ApiServer:
+    ports:
+      - "5701/tcp"   # Port 1
+      - "5702/tcp"   # Port 2
+    jps_name: "ApiServer"
+
+  ZooKeeper:
+    ports:
+      - "2888/tcp"   # Communication Follower-to-Leader
+      - "3888/tcp"   # Élection du Leader
+      - "5181/tcp"   # Connexions client
+    jps_name: "QuorumPeerMain"
+
+  CLDB:
+    ports:
+      - "7222/tcp"   # CLDB Port Principal
+      - "7220/tcp"   # CLDB JMX Monitor
+      - "7221/tcp"   # CLDB Web Port
+      - "7443/tcp"   # HTTPS Web Port
+    jps_name: "CLDB"
+
+  WebServer:
+    ports:
+      - "7443/tcp"   # HTTPS Web Port
+      - "8443/tcp"   # HTTPS Web Port alternatif
+    jps_name: "AdminApplication"
+
+  Data_Access_Gateway:
+    ports:
+      - "5678/tcp"   # Port pour le Data Access Gateway
+    jps_name: "Data_Access_Gateway"
+
+  Drill:
+    ports:
+      - "6090/tcp"   # Drill JMX Port
+      - "8047/tcp"   # Drill Web UI
+      - "31010/tcp"  # User Port
+      - "31011/tcp"  # Control Port
+      - "31012/tcp"  # Data Port
+    jps_name: "Drillbit"
+
+  File_Migration_Service:
+    ports:
+      - "9444/tcp"   # Port pour le service de migration de fichiers
+    jps_name: "File_Migration_Service"
+
+  Gateway:
+    ports:
+      - "7660/tcp"   # Port pour le Gateway
+      - "5678/tcp"   # Port supplémentaire pour le Gateway
+    jps_name: "Gateway"
+
+  HistoryServer:
+    ports:
+      - "10020/tcp"  # RPC
+      - "19888/tcp"  # Web UI et APIs REST
+      - "19890/tcp"  # Port supplémentaire pour le serveur d'historique
+    jps_name: "JobHistoryServer"
+
+  Hive:
+    ports:
+      - "9083/tcp"   # Metastore
+      - "10000/tcp"  # Hiveserver2
+      - "10002/tcp"  # Hiveserver2 Web UI
+    jps_name: "WardenMain"
+
+  Httpfs:
+    ports:
+      - "14000/tcp"  # Port pour HttpFS
+    jps_name: "HttpFS"
+
+  FileServer:
+    ports:
+      - "6660/tcp"   # Port pour le FileServer
+      - "5660/tcp"   # Port alternatif
+      - "5692/tcp"   # Port alternatif
+      - "5724/tcp"   # Port alternatif
+      - "5756/tcp"   # Port alternatif
+    jps_name: "WardenMain"
+
+  NFS:
+    ports:
+      - "9997/tcp"   # Port pour NFS
+      - "9998/tcp"   # Port alternatif
+      - "2049/tcp"   # NFS Principal
+    jps_name: "WardenMain"
+
+  NodeManager:
+    ports:
+      - "8027/tcp"   # JMX Port
+      - "8099/tcp"   # Main
+      - "8040/tcp"   # Localizer RPC
+      - "8044/tcp"   # Web UI et REST APIs
+      - "8042/tcp"   # Port supplémentaire
+    jps_name: "NodeManager"
+
+  OpenTSDB:
+    ports:
+      - "4242/tcp"   # Port pour OpenTSDB
+    jps_name: "TSDMain"
+
+  Port_Mapper:
+    ports:
+      - "111/tcp"    # Port Mapper
+    jps_name: "Rpcbind"
+
+  ResourceManager:
+    ports:
+      - "8025/tcp"   # JMX Port
+      - "8033/tcp"   # Admin RPC
+      - "8032/tcp"   # Client RPC
+      - "8031/tcp"   # Resource Tracker RPC (pour NodeManagers)
+      - "8030/tcp"   # Scheduler RPC (pour ApplicationMasters)
+      - "8088/tcp"   # Web UI (HTTP)
+      - "8090/tcp"   # Web UI (HTTPS)
+    jps_name: "ResourceManager"
+
+  CollecTD:
+    ports:
+      - "8025/tcp"   # Port pour CollecTD
+    jps_name: "WardenMain"
+
+  Shuffle_HTTP:
+    ports:
+      - "13562/tcp"  # Port pour Shuffle HTTP
+    jps_name: "ShuffleHandler"
+
+  TimelineServer:
+    ports:
+      - "10200/tcp"  # Port principal
+      - "8188/tcp"   # Web Interface (HTTP)
+      - "8190/tcp"   # Web Interface (HTTPS)
+    jps_name: "TimelineServer"
+
+
+
+  Zeppelin:
+    ports:
+      - "9995/tcp"   # Port pour Zeppelin
+    jps_name: "ZeppelinServer"

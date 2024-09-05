@@ -1,0 +1,63 @@
+# Fichier principal pour la configuration du pare-feu
+
+# 1. Activer et démarrer le service firewalld
+- name: Enable and start firewalld
+  systemd:
+    name: firewalld
+    state: started
+    enabled: true
+  # Assure que le service firewalld est activé et démarré sur le nœud.
+
+# 2. Déterminer les groupes pertinents pour la configuration des ports
+- name: Filter relevant groups
+  set_fact:
+    filtered_groups: "{{ group_names | select('match', '^(?!Licence_node|edge_node).*_nodes$') }}"
+  # Filtrer les groupes qui se terminent par _nodes, en excluant Licence_node et edge_node.
+
+# 3. Déterminer les ports requis pour le nœud actuel
+- name: Determine required ports for the current node by excluding specific groups
+  set_fact:
+    required_ports: "{{ filtered_groups | map('regex_replace', '_nodes$', '') | map('extract', service_ports) | map(attribute='ports') | flatten | unique }}"
+  # Extraire les ports requis pour les groupes filtrés en fonction de la configuration des services.
+
+# 4. Récupérer les ports actuellement ouverts en utilisant firewall-cmd
+- name: Retrieve currently open ports using firewall-cmd
+  command: sudo firewall-cmd --list-ports
+  register: open_ports_cmd
+  changed_when: false
+  # Obtenir la liste des ports actuellement ouverts pour comparaison.
+
+# 5. Convertir les ports ouverts de chaîne en liste
+- name: Convert open ports from string to list
+  set_fact:
+    open_ports_list: "{{ open_ports_cmd.stdout.split() }}"
+  # Convertir la sortie de la commande firewall-cmd en liste de ports ouverts.
+
+# 6. Filtrer les ports qui doivent être ouverts
+- name: Filter ports that need to be opened
+  set_fact:
+    ports_to_open: "{{ required_ports | difference(open_ports_list) }}"
+  # Déterminer les ports qui doivent être ouverts en comparant les ports requis et les ports déjà ouverts.
+
+# 7. Ouvrir les ports requis
+- name: Open required ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  loop: "{{ ports_to_open }}"
+  when: ports_to_open | length > 0
+  # Ouvrir les ports nécessaires dans le pare-feu si des ports doivent être ouverts.
+
+# 8. Définir la zone par défaut du pare-feu sur public (optionnel, ignore les erreurs)
+- name: Set default zone to public
+  shell: sudo firewall-cmd --set-default-zone=public
+  ignore_errors: true
+  # Optionnel : définir la zone par défaut à public, ignore les erreurs si la commande échoue.
+
+# 9. Recharger la configuration du pare-feu
+- name: Reload firewalld configuration
+  shell: sudo firewall-cmd --reload
+  ignore_errors: true
+  # Recharger la configuration du pare-feu pour appliquer les modifications. Ignore les erreurs si la commande échoue.

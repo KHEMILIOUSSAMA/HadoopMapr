@@ -1,0 +1,11 @@
+- name: Exécuter disksetup pour configurer les disques  # Tâche : configuration des disques via disksetup
+  command: /opt/mapr/server/disksetup -F /tmp/disks  # Commande pour exécuter le script de configuration des disques
+  when:  # Condition d'exécution de la tâche
+    - hostvars[inventory_hostname]['nfs_disks'] | default(0) | int > 0  # Vérifie si 'nfs_disks' est supérieur à 0
+  register: disk_setup_result  # Enregistre le résultat de la commande dans une variable
+
+  failed_when: >  # Définit les conditions d'échec de la tâche
+    disk_setup_result.rc != 0 and  # La tâche échoue si le code retour (rc) est différent de 0
+    'Disk already added in disktab' not in disk_setup_result.stdout  # ...et si le message "Disk already added" n'est pas dans la sortie standard
+
+

@@ -1,0 +1,13 @@
+# Ajouter les entrées au fichier /etc/hosts pour tous les nœuds
+- name: Ajouter les entrées au fichier /etc/hosts
+  blockinfile:
+    path: /etc/hosts  # Chemin du fichier à modifier
+    block: |
+      {% for host in groups['all_nodes'] %}
+      {{ hostvars[host]['ansible_host'] }} {{ host }}
+      {% endfor %}
+    # Bloc d'entrée à ajouter, comprenant l'adresse IP et le nom d'hôte pour chaque nœud dans le groupe 'all_nodes'.
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"  # Marqueur pour identifier les blocs gérés par Ansible
+    state: present  # Assure que le bloc est présent dans le fichier
+
+

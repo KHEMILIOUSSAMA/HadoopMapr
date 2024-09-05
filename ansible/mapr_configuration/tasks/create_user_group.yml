@@ -1,0 +1,21 @@
+- name: S'assurer que le groupe mapr existe avec le GID commun
+  group:
+    name: mapr  # Nom du groupe
+    gid: "{{ gid }}"  # GID (ID du groupe) défini dans les variables
+    state: present  # Assurer que le groupe est présent
+
+- name: Créer l'utilisateur mapr et configurer son répertoire home
+  user:
+    name: mapr  # Nom de l'utilisateur
+    group: mapr  # Groupe auquel appartient l'utilisateur
+    password: "{{ mapr_password }}"  # Mot de passe de l'utilisateur (défini dans les variables)
+    create_home: yes  # Créer le répertoire home de l'utilisateur
+    home: /home/mapr  # Chemin du répertoire home
+    shell: /bin/bash  # Shell par défaut de l'utilisateur
+
+- name: Accorder des privilèges sudo à l'utilisateur mapr
+  copy:
+    dest: "/etc/sudoers.d/mapr"  # Emplacement du fichier de configuration sudo
+    content: "mapr ALL=(ALL) NOPASSWD: ALL"  # Configuration pour permettre à l'utilisateur mapr d'exécuter toutes les commandes sans mot de passe
+    validate: 'visudo -cf %s'  # Valider la syntaxe du fichier de configuration sudo
+

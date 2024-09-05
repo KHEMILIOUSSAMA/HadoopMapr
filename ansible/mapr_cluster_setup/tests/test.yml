@@ -1,0 +1,5 @@
+---
+- hosts: localhost  # Définir l'hôte local comme cible de ce playbook
+  remote_user: root  # Utiliser l'utilisateur root pour les opérations
+  roles:
+    - mapr_cluster_setup  

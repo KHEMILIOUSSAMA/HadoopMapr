@@ -1,0 +1,49 @@
+galaxy_info:
+  author: your name  # Indiquez votre nom ici
+  description: your role description  # Brève description du rôle
+  company: your company (optional)  # Le nom de l'entreprise
+
+  # Si le suivi des problèmes n'est pas sur GitHub, décommentez la ligne suivante
+  # et fournissez une URL pour votre outil de suivi des problèmes.
+  # issue_tracker_url: http://example.com/issue/tracker
+
+  # Choisissez une licence valide depuis https://spdx.org.
+  # Quelques exemples de licences courantes : 
+  # - BSD-3-Clause
+  # - MIT
+  # - GPL-2.0-or-later
+  # - GPL-3.0-only
+  # - Apache-2.0
+  # - CC-BY-4.0
+  license: license (GPL-2.0-or-later, MIT, etc)  # Spécifiez la licence du rôle
+
+  min_ansible_version: 2.1  # Version minimale d'Ansible requise pour ce rôle
+
+  # Si ce rôle est conçu pour les conteneurs, indiquez la version minimale d'Ansible Container.
+  # min_ansible_container_version:  # Décommentez si nécessaire
+
+  #
+  # Liste des plateformes supportées. Pour chaque plateforme, énumérez les versions supportées.
+  # Si vous ne voulez pas spécifier toutes les versions d'une plateforme, utilisez 'all'.
+  # Consultez https://galaxy.ansible.com/api/v1/platforms/ pour voir les plateformes disponibles.
+  #
+  # platforms:
+  # - name: Fedora
+  #   versions:
+  #   - all  # Supporte toutes les versions de Fedora
+  #   - 25   # Supporte uniquement Fedora version 25
+  # - name: SomePlatform
+  #   versions:
+  #   - all  # Supporte toutes les versions
+  #   - 1.0
+  #   - 7
+  #   - 99.99
+
+  galaxy_tags: []  # Ajouter des mots-clés (tags) pour décrire le rôle. Supprimez les crochets si vous en ajoutez.
+    # Listez les tags pour votre rôle ici. Un tag par ligne. 
+    # Les utilisateurs peuvent rechercher des rôles en fonction des tags.
+    # Limite de 20 tags par rôle maximum, un seul mot par tag.
+
+dependencies: []  # Listez les dépendances ici. Supprimez les crochets si des dépendances sont ajoutées.
+  # Les rôles Ansible dont dépend votre rôle peuvent être listés ici.
+

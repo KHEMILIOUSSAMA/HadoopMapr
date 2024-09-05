@@ -1,0 +1,122 @@
+# Installation des packages pour Ubuntu
+
+- name: Installer zookeeper sur Ubuntu
+  apt:
+    name:
+      - mapr-zookeeper  # Package pour Zookeeper
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['ZooKeeper_nodes']"  # Exécute uniquement sur les nœuds ZooKeeper sous Ubuntu
+
+- name: Installer cldb sur les noeuds CLDB_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-cldb  # Package pour CLDB
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['CLDB_nodes']"  # Exécute uniquement sur les nœuds CLDB sous Ubuntu
+
+- name: Installer resource manager sur les noeuds ResourceManager_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-resourcemanager  # Package pour Resource Manager
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['ResourceManager_nodes']"  # Exécute uniquement sur les nœuds Resource Manager sous Ubuntu
+
+- name: Installer fileserver sur les noeuds FileServer_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-fileserver  # Package pour File Server
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['FileServer_nodes']"  # Exécute uniquement sur les nœuds File Server sous Ubuntu
+
+- name: Installer nfs sur les noeuds NFS_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-nfs  # Package pour NFS
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['NFS_nodes']"  # Exécute uniquement sur les nœuds NFS sous Ubuntu
+
+- name: Installer nodemanager sur les noeuds NodeManager_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-nodemanager  # Package pour Node Manager
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['NodeManager_nodes']"  # Exécute uniquement sur les nœuds Node Manager sous Ubuntu
+
+- name: Installer historyserver sur les noeuds HistoryServer_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-historyserver  # Package pour History Server
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['HistoryServer_nodes']"  # Exécute uniquement sur les nœuds History Server sous Ubuntu
+
+- name: Installer webserver sur les noeuds WebServer_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-webserver  # Package pour Web Server
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['WebServer_nodes']"  # Exécute uniquement sur les nœuds Web Server sous Ubuntu
+
+- name: Installer api server sur les noeuds ApiServer_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-apiserver  # Package pour API Server
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['ApiServer_nodes']"  # Exécute uniquement sur les nœuds API Server sous Ubuntu
+
+- name: Installer timelineserver sur les noeuds TimelineServer_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-timelineserver  # Package pour Timeline Server
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['TimelineServer_nodes']"  # Exécute uniquement sur les nœuds Timeline Server sous Ubuntu
+
+- name: Installer hue sur les noeuds Hue_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-hue  # Package pour Hue
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Hue_nodes']"  # Exécute uniquement sur les nœuds Hue sous Ubuntu
+
+- name: Installer drill sur les noeuds Drill_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-drill  # Package pour Drill
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Drill_nodes']"  # Exécute uniquement sur les nœuds Drill sous Ubuntu
+
+- name: Installer hive sur les noeuds Hive_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-hive  # Package pour Hive
+      - mapr-hivemetastore  # Package pour Hive Metastore
+      - mapr-hiveserver2  # Package pour Hive Server 2
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Hive_nodes']"  # Exécute uniquement sur les nœuds Hive sous Ubuntu
+
+- name: Installer opentsdb sur les noeuds OpenTSDB_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-opentsdb  # Package pour OpenTSDB
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['OpenTSDB_nodes']"  # Exécute uniquement sur les nœuds OpenTSDB sous Ubuntu
+
+- name: Installer collectd sur les noeuds CollecTD_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-collectd  # Package pour Collectd
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['CollecTD_nodes']"  # Exécute uniquement sur les nœuds Collectd sous Ubuntu
+
+- name: Installer gateway sur les noeuds Gateway_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-gateway  # Package pour Gateway
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Gateway_nodes']"  # Exécute uniquement sur les nœuds Gateway sous Ubuntu
+
+- name: Installer httpfs sur les noeuds Httpfs_nodes sous Ubuntu
+  apt:
+    name:
+      - mapr-httpfs  # Package pour HTTPFS
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Httpfs_nodes']"  # Exécute uniquement sur les nœuds HTTPFS sous Ubuntu

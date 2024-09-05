@@ -1,0 +1,21 @@
+# Mise à jour et installation des packages pour Ubuntu
+
+# Mettre à jour tous les packages à la dernière version pour Ubuntu
+- name: Mettre à jour tous les packages à la dernière version pour Ubuntu
+  apt:
+    name: "*"
+    state: latest
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS']"
+
+# Installer des utilitaires spécifiques et mettre à jour le cache pour Ubuntu
+- name: Installer des utilitaires et mettre à jour le cache pour Ubuntu
+  apt:
+    name:
+      - syslinux-utils
+      - firewalld
+      - python
+      - nfs-kernel-server
+      - openjdk-8-jdk
+    state: present
+    update_cache: yes
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS']"

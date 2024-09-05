@@ -1,0 +1,108 @@
+# Vérifie si le cluster est déjà configuré en cherchant un fichier spécifique
+- name: Check if the cluster is already configured
+  stat:
+    path: /opt/mapr/conf/cluster_configured.txt  # Chemin du fichier de configuration du cluster
+  register: cluster_configured  # Enregistre le résultat pour une utilisation ultérieure
+  delegate_to: "{{ groups['Licence_node'] | first }}"  # Exécute la vérification sur le premier nœud Licence
+
+# Met à jour tous les paquets à la dernière version pour CentOS
+- name: Update all packages to the latest version pour CentOS
+  yum:
+    name: "*"  # Met à jour tous les paquets
+    state: latest  # Assure que les paquets sont à jour
+  when: "'CentOS' in hostvars[inventory_hostname]['OS']"  # Exécute uniquement sur les hôtes CentOS
+
+# Met à jour tous les paquets à la dernière version pour Ubuntu
+- name: Update all packages to the latest version pour Ubuntu
+  apt:
+    name: "*"  # Met à jour tous les paquets
+    state: latest  # Assure que les paquets sont à jour
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS']"  # Exécute uniquement sur les hôtes Ubuntu
+
+# Exécute configure.sh sur le nœud avec la licence si le cluster n'est pas encore configuré
+- name: Exécuter configure.sh sur le nœud avec la licence
+  command: >
+    /opt/mapr/server/configure.sh -no-autostart
+    -C {{ groups['Licence_node'] | first }}  # Adresse du nœud CLDB
+    -Z {{ groups['Licence_node'] | first }}  # Adresse du nœud ZooKeeper
+    -N {{ cluster_name }}  # Nom du cluster MapR
+  delegate_to: "{{ groups['Licence_node'] | first }}"  # Exécute la commande sur le premier nœud Licence
+  when: not cluster_configured.stat.exists  # Exécute seulement si le cluster n'est pas encore configuré
+
+# Rechargement du démon systemd pour appliquer les changements de configuration
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes  # Recharger la configuration systemd
+  when: not cluster_configured.stat.exists  # Exécute seulement si le cluster n'est pas encore configuré
+
+# Démarre le service MapR-ZooKeeper si le cluster n'est pas encore configuré
+- name: Start MapR-ZooKeeper
+  systemd:
+    name: mapr-zookeeper  # Nom du service à démarrer
+    state: started  # Démarrer le service
+  when: not cluster_configured.stat.exists  # Exécute seulement si le cluster n'est pas encore configuré
+
+# Démarre le service MapR-Warden si le cluster n'est pas encore configuré
+- name: Start MapR-Warden
+  systemd:
+    name: mapr-warden  # Nom du service à démarrer
+    state: started  # Démarrer le service
+  when: not cluster_configured.stat.exists  # Exécute seulement si le cluster n'est pas encore configuré
+
+# Attendre que les services MapR se stabilisent avant de continuer
+- name: Wait for MapR services to stabilize
+  pause:
+    seconds: 10  # Attendre 10 secondes
+  when: not cluster_configured.stat.exists  # Exécute seulement si le cluster n'est pas encore configuré
+
+# Exécuter disksetup pour configurer les disques si des disques NFS sont présents
+- name: Exécuter disksetup pour configurer les disques
+  command: sudo /opt/mapr/server/disksetup -F /tmp/disks  # Commande pour configurer les disques
+  when:
+    - hostvars[inventory_hostname]['nfs_disks'] | default(0) | int > 0  # Exécute seulement si des disques NFS sont définis
+  register: disk_setup_result  # Enregistre le résultat pour une vérification ultérieure
+  failed_when: >
+    disk_setup_result.rc != 0 and 'Disk already added in disktab' not in disk_setup_result.stdout  # Échec si le code de retour n'est pas 0 et que le message d'erreur ne correspond pas
+  ignore_errors: true  # Ignorer les erreurs pour ne pas interrompre le playbook
+
+# Vérifier l'ID du cluster MapR et attendre la disponibilité
+- name: Check for MapR Cluster ID
+  shell: sudo maprcli license showId  # Commande pour obtenir l'ID du cluster
+  register: license_output  # Enregistre la sortie pour une vérification ultérieure
+  until: "license_output.stdout != 'ERROR (10003) -  Show ClusterID: EOPFAILED'"  # Réessayer jusqu'à ce que l'ID du cluster soit disponible
+  retries: 10  # Nombre de tentatives de réessai
+  delay: 20  # Délai entre les tentatives en secondes
+
+# Déboguer la sortie de la licence en affichant l'ID du cluster
+- name: Debug license output
+  debug:
+    var: license_output.stdout  # Affiche la sortie de la commande de vérification de l'ID du cluster
+  delegate_to: localhost  # Exécute la débogue sur localhost
+
+# Imprimer l'ID du cluster et le sauvegarder dans un fichier local
+- name: Print the Cluster ID and save it to a local file
+  delegate_to: localhost  # Exécute la tâche sur localhost
+  copy:
+    content: "The Cluster ID is {{ license_output.stdout }}"  # Contenu du fichier avec l'ID du cluster
+    dest: "./output/cluster_id.txt"  # Emplacement du fichier de sortie
+
+# Marquer le cluster comme configuré en créant un fichier de marqueur
+- name: Mark the cluster as configured
+  file:
+    path: /opt/mapr/conf/cluster_configured.txt  # Chemin du fichier de marqueur
+    state: touch  # Crée le fichier s'il n'existe pas ou met à jour la date de modification s'il existe
+  delegate_to: "{{ groups['Licence_node'] | first }}"  # Exécute la tâche sur le premier nœud Licence
+  when: license_output.stdout is defined and "ERROR" not in license_output.stdout  # Exécute seulement si la sortie de l'ID du cluster est définie et ne contient pas d'erreur
+
+# Envoyer une notification Slack concernant les fichiers de licence
+- name: Send slack notification for license files
+  uri:
+    url: "{{ slack_webhook_url }}"  # URL du webhook Slack
+    method: POST  # Méthode HTTP POST pour envoyer la notification
+    body_format: json  # Format du corps de la requête en JSON
+    body: >
+      {
+        "text": "Le playbook Ansible est actuellement en attente des fichiers de licences."  # Message de notification
+      }
+  delegate_to: localhost  # Exécute la notification sur localhost
+  run_once: true  # Exécute cette tâche une seule fois

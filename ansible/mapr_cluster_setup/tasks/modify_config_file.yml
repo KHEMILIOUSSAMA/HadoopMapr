@@ -1,0 +1,47 @@
+- name: Configurer les services MapR sur tous les nœuds  # Configuration des services MapR avec les options appropriées
+  command: >  # La commande configure.sh pour configurer MapR
+    /opt/mapr/server/configure.sh -no-autostart  # Ne pas démarrer automatiquement les services après configuration
+    -C {{ groups['CLDB_nodes'] | join(',') }}  # Liste des nœuds CLDB (Comma-separated)
+    -Z {{ groups['ZooKeeper_nodes'] | join(',') }}  # Liste des nœuds ZooKeeper (Comma-separated)
+    -N {{ cluster_name }}  # Nom du cluster MapR
+
+- name: Sauvegarder le fichier de configuration ZooKeeper si non existant  # Assurer la sauvegarde de zoo.cfg
+  copy:
+    src: "/opt/mapr/zookeeper/zookeeper-3.4.11/conf/zoo.cfg"
+    dest: "/opt/mapr/zookeeper/zookeeper-3.4.11/conf/zoo.cfg.backup"
+    remote_src: yes
+    force: no  # Ne pas écraser le fichier s'il existe déjà
+  when: inventory_hostname in groups['ZooKeeper_nodes']  # Exécuter uniquement sur les nœuds ZooKeeper
+
+- name: Modifier zoo.cfg pour que le nœud local écoute sur 0.0.0.0  # Ajustement du fichier zoo.cfg
+  lineinfile:
+    path: /opt/mapr/zookeeper/zookeeper-3.4.11/conf/zoo.cfg
+    regexp: '^(server\.\d+)={{ inventory_hostname }}(:\d+:\d+)$'  # Cherche les lignes correspondant à l'inventaire
+    line: '\1=0.0.0.0\2'  # Remplace l'adresse de l'hôte par 0.0.0.0
+    backrefs: yes  # Utilisation des références dans la substitution
+  when: inventory_hostname in groups['ZooKeeper_nodes']  # Exécuter uniquement sur les nœuds ZooKeeper
+
+- name: Redémarrer ZooKeeper  # Redémarre le service ZooKeeper après modification
+  service:
+    name: mapr-zookeeper
+    state: restarted
+  when: inventory_hostname in groups['ZooKeeper_nodes']  # Exécuter uniquement sur les nœuds ZooKeeper
+
+- name: Sauvegarder le fichier de configuration Drill si non existant  # Assurer la sauvegarde de drill-override.conf
+  copy:
+    src: "/opt/mapr/drill/drill-1.15.0/conf/drill-override.conf"
+    dest: "/opt/mapr/drill/drill-1.15.0/conf/drill-override.conf.backup"
+    remote_src: yes
+    force: no  # Ne pas écraser la sauvegarde si elle existe déjà
+  when: inventory_hostname in groups['Drill_nodes']  # Exécuter uniquement sur les nœuds Drill
+
+- name: Ajouter le cluster-id et zk.connect dans drill-override.conf  # Ajouter la configuration de Drill
+  lineinfile:
+    path: "/opt/mapr/drill/drill-1.15.0/conf/drill-override.conf"
+    insertafter: 'drill.exec: \{'  # Insérer la ligne après l'entrée 'drill.exec: {'
+    line: |
+      cluster-id: "{{ cluster_name }}",
+      zk.connect: "{{ groups['ZooKeeper_nodes'] | map('regex_replace', '^(.*)$', '\\1:5181') | join(',') }}"
+      allow_loopback_address_binding: true  # Autorise le binding à l'adresse de bouclage
+    state: present
+  when: inventory_hostname in groups['Drill_nodes']  # Exécuter uniquement sur les nœuds Drill

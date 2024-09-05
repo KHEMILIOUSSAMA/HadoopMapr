@@ -1,0 +1,12 @@
+- name: Configurer les services MapR sur tous les nœuds  # Configuration des services MapR avec les options appropriées
+  command: >  # La commande configure.sh pour configurer MapR
+    /opt/mapr/server/configure.sh -no-autostart  # Ne pas démarrer automatiquement les services après configuration
+    -C {{ groups['CLDB_nodes'] | join(',') }}  # Liste des nœuds CLDB (Comma-separated)
+    -Z {{ groups['ZooKeeper_nodes'] | join(',') }}  # Liste des nœuds ZooKeeper (Comma-separated)
+    -N {{ cluster_name }}  # Nom du cluster MapR
+
+- name: Recharger le daemon systemd  # Rechargement du daemon systemd sur les nœuds ZooKeeper
+  systemd:
+    daemon_reload: yes  # Forcer le rechargement de la configuration systemd
+  when: inventory_hostname in groups['ZooKeeper_nodes']  # Cette étape ne s'exécute que sur les nœuds ZooKeeper
+

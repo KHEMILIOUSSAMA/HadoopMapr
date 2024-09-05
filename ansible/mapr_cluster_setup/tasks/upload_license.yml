@@ -1,0 +1,31 @@
+- name: Assurer que le répertoire /opt/mapr/licenses existe  # Création du répertoire des licences si nécessaire
+  ansible.builtin.file:
+    path: /opt/mapr/licenses  # Chemin du répertoire
+    state: directory  # Assurer que c'est un répertoire
+
+- name: Trouver et ajouter les fichiers de licence au cluster si nécessaire  # Trouver les fichiers .DAT et les ajouter
+  block:
+    - name: Trouver tous les fichiers .DAT dans le répertoire spécifié  # Rechercher les fichiers .DAT
+      find:
+        paths: "mapr_cluster_setup/files"  # Répertoire de recherche
+        patterns: "*.DAT"  # Motif de recherche
+      register: existing_files
+      delegate_to: localhost  # Exécuter la recherche sur localhost
+
+    - name: Renommer les fichiers pour supprimer l'encodage URL  # Remplacement des %20 par des espaces dans les noms de fichiers
+      command: >
+        mv "{{ item.path }}" "{{ item.path | regex_replace('%20', ' ') }}"
+      loop: "{{ existing_files.files }}"  # Traiter chaque fichier trouvé
+      when: "'%20' in item.path"  # Exécuter seulement si %20 est dans le nom du fichier
+      delegate_to: localhost  # Exécuter sur localhost
+      run_once: true  # Exécuter cette tâche une seule fois
+
+    - name: Ajouter les fichiers de licence au cluster si nécessaire  # Ajouter les fichiers de licence au cluster
+      command: >
+        maprcli license add -cluster {{ cluster_name }} -license '/opt/mapr/licenses/{{ item.path | basename | regex_replace('%20', ' ') }}' -is_file true
+      loop: "{{ existing_files.files }}"  # Traiter chaque fichier trouvé
+      when: license_count | int < 4  # Exécuter seulement si moins de 4 licences sont présentes
+      register: license_add_result
+      delegate_to: "{{ groups['Licence_node'] | first }}"  # Exécuter sur le premier nœud Licence
+      run_once: true  # Exécuter cette tâche une seule fois
+      ignore_errors: true  # Ignorer les erreurs éventuelles

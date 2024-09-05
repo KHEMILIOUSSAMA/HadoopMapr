@@ -1,0 +1,18 @@
+---
+# Inclusion de tâches spécifiques en fonction des rôles et des étapes du déploiement du cluster
+
+- include_tasks: upload_license.yml  # Étape pour téléverser la licence sur les nœuds appropriés
+  when: inventory_hostname in groups['Licence_node']  # Cette tâche s'exécute uniquement sur les nœuds Licence
+
+- include_tasks: configure_cluster.yml  # Étape pour configurer le cluster (définition générale)
+
+- include_tasks: attach_disks.yml  # Étape pour attacher les disques aux nœuds du cluster
+
+- import_tasks: start_cluster.yml  # Importation de la tâche pour démarrer le cluster
+  tags:
+    - start_cluster  # Tag pour faciliter le démarrage spécifique du cluster
+
+- import_tasks: modify_config_file.yml  # Importation de la tâche pour modifier un fichier de configuration
+  tags:
+    - modify_config_file  # Tag pour exécuter cette tâche de modification de fichier indépendamment si nécessaire
+

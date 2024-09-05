@@ -1,0 +1,50 @@
+require 'yaml'
+
+# Chargement des données de configuration depuis le fichier YAML
+config_data = YAML.load_file('config.yml')
+
+Vagrant.configure("2") do |config|
+  # Boucle à travers chaque définition de machine virtuelle dans les données de configuration
+  config_data['vms'].each do |vm_data|
+    # Définition d'une machine virtuelle
+    config.vm.define "#{vm_data['name']}" do |node|
+      # Spécification de l'image de la machine virtuelle à utiliser
+      node.vm.box = "bento/ubuntu-18.04"
+
+      # Définition du nom d'hôte de la machine virtuelle
+      node.vm.hostname = "#{vm_data['name']}#{config_data['localhost_name']}"
+
+      # Configuration du réseau privé avec une adresse IP spécifique
+      node.vm.network "private_network", ip: vm_data['ip']
+
+      # Définition du délai de démarrage avant que Vagrant ne considère la machine comme plantée
+      node.vm.boot_timeout = 3000
+
+      # Configuration spécifique au fournisseur VirtualBox
+      node.vm.provider "virtualbox" do |vb|
+        # Définition du nom de la machine virtuelle dans VirtualBox
+        vb.name = "#{vm_data['name']}"
+
+        # Spécification de la mémoire et du nombre de CPU alloués à la machine virtuelle
+        vb.memory = vm_data['memory']
+        vb.cpus = vm_data['cpu']
+
+        # Création et attachement des disques secondaires si spécifié
+        (1..vm_data['secondary_disks']).each do |j|
+          # Nom du fichier disque virtuel
+          disk_filename = "#{vm_data['name']}_data#{j}_#{Time.now.to_i}.vdi"
+          # Chemin complet vers le fichier disque
+          disk_path = File.join(config_data['disks_folder_path'], disk_filename)
+          # Création du disque virtuel
+          vb.customize ['createhd', '--filename', disk_path, '--size', config_data['disk_size']]
+          # Attachement du disque virtuel à la machine virtuelle
+          vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', j, '--device', 0, '--type', 'hdd', '--medium', disk_path]
+        end
+      end
+
+      # Provisionnement de la machine virtuelle avec un script shell, si nécessaire
+      node.vm.provision "shell", path: "setup_ansible_user.sh", privileged: true
+    end
+  end
+end
+

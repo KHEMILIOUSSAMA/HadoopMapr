@@ -1,0 +1,152 @@
+# Définition des versions des composants
+mapr_version: "v6.1.1"  # Version de MapR
+mapr_ecosystem_version: "MEP-6.1.1"  # Version de l'écosystème MapR
+
+# Nom du cluster
+cluster_name: mapr.cluster.local  # Nom du cluster MapR
+
+# Identifiant de groupe (GID)
+gid: 3333  # GID pour les groupes d'utilisateurs
+
+# Définition des services et des ports associés
+service_ports:
+  # Ports utilisés par tous les services généraux
+  all:
+    ports:
+      - "25/tcp"   # Port mail
+      - "323/tcp"  # Port pour Time Synchronization Protocol
+      - "111/tcp"  # Port pour RPC
+      - "68/tcp"   # Port pour DHCP
+      - "1111/tcp" # Port pour divers services
+      - "798/tcp"  # Port utilisé par des services variés
+    jps_name: "WardenMain"  # Nom du service JPS
+
+  # Ports pour le service ApiServer
+  ApiServer:
+    ports:
+      - "5701/tcp"  # Port principal
+      - "5702/tcp"  # Port secondaire
+    jps_name: "ApiServer"  # Nom du service JPS
+
+  # Ports pour ZooKeeper
+  ZooKeeper:
+    ports:
+      - "2888/tcp"  # Communication Follower-to-leader
+      - "3888/tcp"  # Élection du leader
+      - "5181/tcp"  # Connexions client
+    jps_name: "QuorumPeerMain"  # Nom du service JPS
+
+  # Ports pour CLDB (MapR)
+  CLDB:
+    ports:
+      - "7222/tcp"  # Port principal
+      - "7220/tcp"  # Port JMX pour CLDB
+      - "7221/tcp"  # Port web CLDB
+      - "7443/tcp"  # Port HTTPS pour CLDB
+    jps_name: "CLDB"  # Nom du service JPS
+
+  # Ports pour WebServer
+  WebServer:
+    ports:
+      - "7443/tcp"  # Port HTTPS
+      - "8443/tcp"  # Port alternatif HTTPS
+    jps_name: "AdminApplication"  # Nom du service JPS
+
+  # Ports pour Data_Access_Gateway
+  Data_Access_Gateway:
+    ports:
+      - "5678/tcp"  # Port principal
+    jps_name: "Data_Access_Gateway"  # Nom du service JPS
+
+  # Ports pour Drill
+  Drill:
+    ports:
+      - "6090/tcp"  # Port JMX
+      - "8047/tcp"  # Port Web UI
+      - "31010/tcp" # Port utilisateur
+      - "31011/tcp" # Port de contrôle
+      - "31012/tcp" # Port de données
+    jps_name: "Drillbit"  # Nom du service JPS
+
+  # Ports pour File_Migration_Service
+  File_Migration_Service:
+    ports:
+      - "9444/tcp"  # Port principal
+    jps_name: "File_Migration_Service"  # Nom du service JPS
+
+  # Ports pour Gateway
+  Gateway:
+    ports:
+      - "7660/tcp"  # Port principal
+      - "5678/tcp"  # Port secondaire
+    jps_name: "Gateway"  # Nom du service JPS
+
+  # Ports pour FileServer
+  FileServer:
+    ports:
+      - "6660/tcp"  # Port principal
+      - "5660/tcp"  # Port secondaire
+      - "5692/tcp"  # Port pour services divers
+      - "5724/tcp"  # Port pour services divers
+      - "5756/tcp"  # Port pour services divers
+    jps_name: "WardenMain"  # Nom du service JPS
+
+  # Ports pour NFS
+  NFS:
+    ports:
+      - "9997/tcp"  # Port principal
+      - "9998/tcp"  # Port secondaire
+      - "2049/tcp"  # Port NFS principal
+    jps_name: "WardenMain"  # Nom du service JPS
+
+  # Ports pour NodeManager
+  NodeManager:
+    ports:
+      - "8027/tcp"  # Port JMX
+      - "8099/tcp"  # Port principal
+      - "8040/tcp"  # RPC Localizer
+      - "8044/tcp"  # Web UI et API REST
+      - "8042/tcp"  # Port principal
+    jps_name: "NodeManager"  # Nom du service JPS
+
+  # Ports pour OpenTSDB
+  OpenTSDB:
+    ports:
+      - "4242/tcp"  # Port principal
+    jps_name: "TSDMain"  # Nom du service JPS
+
+  # Ports pour Port_Mapper
+  Port_Mapper:
+    ports:
+      - "111/tcp"  # Port principal
+    jps_name: "Rpcbind"  # Nom du service JPS
+
+  # Ports pour ResourceManager
+  ResourceManager:
+    ports:
+      - "8025/tcp"  # Port JMX
+      - "8033/tcp"  # RPC Admin
+      - "8032/tcp"  # RPC Client
+      - "8031/tcp"  # RPC Resource Tracker (pour NodeManagers)
+      - "8030/tcp"  # RPC Scheduler (pour ApplicationMasters)
+      - "8088/tcp"  # Web UI (HTTP)
+      - "8090/tcp"  # Web UI (HTTPS)
+    jps_name: "ResourceManager"  # Nom du service JPS
+
+  # Ports pour CollecTD
+  CollecTD:
+    ports:
+      - "8025/tcp"  # Port principal
+    jps_name: "WardenMain"  # Nom du service JPS
+
+  # Ports pour Shuffle_HTTP
+  Shuffle_HTTP:
+    ports:
+      - "13562/tcp"  # Port principal
+    jps_name: "ShuffleHandler"  # Nom du service JPS
+
+  # Ports pour Zeppelin
+  Zeppelin:
+    ports:
+      - "9995/tcp"  # Port principal
+    jps_name: "ZeppelinServer"  # Nom du service JPS

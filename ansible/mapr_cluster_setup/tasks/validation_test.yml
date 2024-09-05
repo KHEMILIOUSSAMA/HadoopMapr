@@ -1,0 +1,38 @@
+- name: Vérifier l'état des services MapR et Hadoop  # Vérifier l'état des services en fonction des groupes d'hôtes
+  block:
+    - name: Vérifier l'état du service ZooKeeper en utilisant 'ruok'  # Vérifier la disponibilité de ZooKeeper
+      shell: echo ruok | nc {{ inventory_hostname }} 5181
+      register: zk_ruok_raw
+      changed_when: false
+      ignore_errors: true
+      when: inventory_hostname in groups['ZooKeeper_nodes']
+
+    - name: Vérifier l'état de CLDB  # Vérifier le statut de CLDB
+      shell: maprcli node cldbmaster
+      register: cldb_status
+      changed_when: false
+      ignore_errors: true
+      when: inventory_hostname in groups['CLDB_nodes']
+
+    - name: Vérifier l'état du service ResourceManager  # Vérifier l'état du ResourceManager
+      command: yarn node -list
+      register: rm_status
+      changed_when: false
+      ignore_errors: true
+      when: inventory_hostname in groups['ResourceManager_nodes']
+
+    - name: Vérifier l'état de FileServer  # Vérifier le statut de FileServer
+      command: maprcli node list -columns svc
+      register: fs_status
+      changed_when: false
+      ignore_errors: true
+      when: inventory_hostname in groups['FileServer_nodes']
+
+    - name: Vérifier l'état du service NFS  # Vérifier le statut du service NFS
+      command: showmount -e {{ inventory_hostname }}
+      register: nfs_status
+      changed_when: false
+      ignore_errors: true
+      when: inventory_hostname in groups['NFS_nodes']
+
+    - name: Vérifier l

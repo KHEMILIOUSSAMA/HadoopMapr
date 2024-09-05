@@ -1,0 +1,56 @@
+---
+- hosts: HistoryServer_nodes
+  become: yes
+  vars_files:
+    - ./mapr_configuration/vars/creds.yml   
+  tasks:
+    - name: Notify relevant users on Slack about HistoryServer restart
+      uri:
+        url: "{{ slack_webhook_url }}"
+        method: POST
+        body_format: json
+        body: >
+          {
+            "text": "🚨 *Avis Important à l'équipe de développement de données et aux administrateurs système* 🚨\n\nLe HistoryServer sera redémarré dans quelques instants pour maintenance. Veuillez terminer toutes les tâches critiques ou sauvegarder votre travail en cours.\n\n Le redémarrage peut affecter l'accès aux historiques des jobs et les diagnostics temporairement.\n\nNous vous tiendrons informés une fois la maintenance terminée. Merci de votre compréhension et coopération."
+          }
+      delegate_to: localhost
+
+    - name: Stop HistoryServer
+      command: sudo maprcli node services -nodes {{ inventory_hostname }} -name historyserver -action stop
+
+
+
+    
+
+
+
+    - name: Stop HistoryServer
+      command: sudo maprcli node services -nodes {{ inventory_hostname }} -name historyserver -action start
+
+
+    - name: Notify users on Slack that HistoryServer is starting
+      uri:
+        url: "{{ slack_webhook_url }}"
+        method: POST
+        body_format: json
+        body: >
+          {
+            "text": "🔄 *Mise à jour du serveur* 🔄\n\nLe *HistoryServer* est actuellement en cours de redémarrage. Vous pourriez observer des ralentissements temporaires ou des comportements inhabituels dans les analyses et le traitement des jobs MapReduce. Merci de votre patience pendant que nous finalisons la maintenance. Nous nous efforçons de minimiser les interruptions."
+          }
+      delegate_to: localhost
+
+
+    
+
+    - name: Notify users on Slack that HistoryServer is up and running
+      uri:
+        url: "{{ slack_webhook_url }}"
+        method: POST
+        body_format: json
+        body: >
+          {
+            "text": "🎉 *Le HistoryServer est désormais opérationnel!* 🎉\n\nMerci pour votre patience durant cette maintenance. Tous les services sont restaurés, et vous pouvez désormais poursuivre vos activités normalement. Bonne continuation !"
+          }
+      delegate_to: localhost
+      when: jps_output.stdout != ""
+

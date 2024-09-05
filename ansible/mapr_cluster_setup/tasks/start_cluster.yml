@@ -1,0 +1,14 @@
+
+- name: Démarrer le service MapR-Warden  # Assurer le démarrage du service Warden sur tous les nœuds
+  systemd:
+    name: mapr-warden  # Nom du service Warden
+    state: started  # Démarrer le service si ce n'est pas déjà le cas
+
+- name: Démarrer le service MapR-ZooKeeper  # Assurer le démarrage du service ZooKeeper
+  systemd:
+    name: mapr-zookeeper  # Nom du service ZooKeeper
+    state: started  # Démarrer le service si ce n'est pas déjà le cas
+  when: inventory_hostname in groups['ZooKeeper_nodes']  # Exécuter uniquement sur les nœuds ZooKeeper
+
+
+
