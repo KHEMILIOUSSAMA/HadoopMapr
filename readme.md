@@ -6,14 +6,14 @@
 Ce projet met en place un cluster Hadoop MapR avec mirroring de volumes pour assurer la haute disponibilité des données. 
 Le déploiement est automatisé avec Ansible et utilise des machines virtuelles sous Vagrant.
 
-➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
+➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
 
 - **Fonctionnalités clés:**
     - **Création des VMs avec Vagrant**: Déploiement et gestion des machines virtuelles pour le cluster à l'aide de Vagrant
     - **Automatisation Ansible**: Provisionnement, configuration et gestion complète du cluster via des playbooks Ansible
     - **Mirroring de Volume**: Réplication automatique des données d'un volume A vers un volume A' avec MapR pour garantir la  disponibilité.
 
-➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
+➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
 
 - **Arborescence du projet:**
 
@@ -126,7 +126,7 @@ Le déploiement est automatisé avec Ansible et utilise des machines virtuelles 
 ```
 
 
-➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
+➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
 
 - **Fichiers clés:**
     - **ansible.cfg**: Fichier de configuration global d'Ansible.
@@ -136,7 +136,7 @@ Le déploiement est automatisé avec Ansible et utilise des machines virtuelles 
     - **add_services.yml**: Playbook pour ajouter des services à un cluster existant.
     - **start_cluster.yml**: Playbook pour démarrer le cluster.
 
-➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
+➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
 
 - **Détails VM:**
   - **node01.cluster.local**: IP `192.168.50.101`, Ubuntu, 1 NFS disk
@@ -146,7 +146,7 @@ Le déploiement est automatisé avec Ansible et utilise des machines virtuelles 
   - **node04.cluster.local**: IP `192.168.50.104`, Ubuntu, 1 NFS disk
   - **node05.cluster.local**: IP `192.168.50.105`, Ubuntu, 1 NFS disk
 
-➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
+➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
 
 - **Services VM:**
   - `ApiServer_nodes`: edge.cluster.local
@@ -163,7 +163,7 @@ Le déploiement est automatisé avec Ansible et utilise des machines virtuelles 
   - `Licence_node`: node01.cluster.local
   - `edge_node`: edge.cluster.local  
 
-➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
+➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
 
 **Commandes Principales:**
   - **Installation d'Ansible**: sudo apt -y install ansible
