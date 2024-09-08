@@ -1,17 +1,11 @@
 ![MAP_logo](https://awsmp-logos.s3.amazonaws.com/802b0a25-877e-4b57-9007-a3fd284815a5/0d64f493222427748b7c21e0104763be.png)
 
 
-**Projet JEMS:** Création d'un mirroring de volume de A vers A'
+**Projet Fil rouge:** Création d'un mirroring de volume de A vers A'
 
 Ce projet met en place un cluster Hadoop MapR avec mirroring de volumes pour assurer la haute disponibilité des données. 
-Le déploiement est automatisé avec Ansible et utilise des machines virtuelles sous Vagrant.
+Le déploiement est automatisé avec Ansible et la création  des machines virtuelles sous Vagrant.
 
-➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
-
-- **Fonctionnalités clés:**
-    - **Création des VMs avec Vagrant**: Déploiement et gestion des machines virtuelles pour le cluster à l'aide de Vagrant
-    - **Automatisation Ansible**: Provisionnement, configuration et gestion complète du cluster via des playbooks Ansible
-    - **Mirroring de Volume**: Réplication automatique des données d'un volume A vers un volume A' avec MapR pour garantir la  disponibilité.
 
 ➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
 
@@ -170,6 +164,17 @@ Le déploiement est automatisé avec Ansible et utilise des machines virtuelles 
   - **Création des VMs**: vagrant up
   - **Vérification de la connectivité**: ansible all -m ping
   - **Installation de MapR**: ansible-playbook deploy_mapr.yml
+
+➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
+
+**Création du Mirroring:**
+  - **Créer un volume nommé A avec le chemin /A_volume**: maprcli volume create -name A_volume -path /A_volume
+
+  - **Créer un volume miroir nommé A_prime qui réplique les données du volume A**: maprcli volume create -name A_volume_prime -source A_volume@mapr.cluster.local -path /A_volume_prime -type mirror -json
+
+  - **Démarrer la réplication des données du volume A vers le volume miroir A_prime**: maprcli volume mirror start -name A_volume_prime
+
+  
   
 
 
