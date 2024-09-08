@@ -1,10 +1,9 @@
-![MAP_logo](https://awsmp-logos.s3.amazonaws.com/802b0a25-877e-4b57-9007-a3fd284815a5/0d64f493222427748b7c21e0104763be.png)
+
 
 
 **Projet Fil rouge:** Création d'un mirroring de volume de A vers A'
 
-Ce projet met en place un cluster Hadoop MapR avec mirroring de volumes pour assurer la haute disponibilité des données. 
-Le déploiement est automatisé avec Ansible et la création  des machines virtuelles sous Vagrant.
+Ce projet implémente un cluster Hadoop MapR avec mirroring de volumes pour garantir la haute disponibilité des données. Le déploiement est entièrement automatisé à l'aide d'Ansible, tandis que la création des machines virtuelles est réalisée avec Vagrant.
 
 
 ➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
